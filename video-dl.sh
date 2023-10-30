@@ -14,7 +14,7 @@ then
     ffmpeg -i "$filename" -crf 17 -c:v libx264 -map 0 -c:a aac -c:s mov_text "$( basename "$filename" .webm )".mp4
     # output
     rm -rf "$filename"
-    rm -rf $( basename "$filename" .webm ).*.vtt
+    rm -rf "$( basename "$filename" .webm )"*.vtt
 fi
 echo "Download of $( basename "$filename" .webm).mp4 completed"
 
