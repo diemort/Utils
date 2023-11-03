@@ -3,6 +3,7 @@
 # download with pt-BR subs:
 echo "Downloading ${1}"
 yt-dlp \
+    --restrict-filenames \
     --write-sub \
     --write-auto-sub \
     --sub-lang "pt*" \
@@ -11,7 +12,7 @@ yt-dlp \
     ${1}
 
 # extract filename:
-filename="$( yt-dlp --get-filename --no-download-archive ${1} )"
+filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive ${1} )"
 subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
 output="$( basename "$filename" .webm )-crf${2}.mp4"
 
