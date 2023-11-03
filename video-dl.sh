@@ -1,7 +1,12 @@
 #!/bin/bash
 
+# Styling:
+bold=$( tput bold )
+normal=$( tput sgr0 )
+underline=$( tput smul )
+
 # download with pt-BR subs:
-echo "Downloading ${1}"
+echo "${bold}>>>>> ${underline}Downloading ${1}${normal}"
 yt-dlp \
     --restrict-filenames \
     --write-sub \
@@ -17,12 +22,13 @@ subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
 output="$( basename "$filename" .webm )-crf${2}.mp4"
 
 # correct timing in subtitle:
+echo "${bold}>>>>> ${underline}Adjusting timing in auto subtitles${normal}"
 ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
 
 # convert preserving quality and subs:
 if [[ $filename != *.mp4 ]]
 then
-    echo "Converting video to mp4"
+    echo "${bold}>>>>> ${underline}Converting video to mp4${normal}"
     ffmpeg -i "$filename" \
         -crf ${2} \
         -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
@@ -33,5 +39,5 @@ then
     rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
 fi
-echo "Download of $output completed"
+echo "${bold}>>>>> ${underline}Download of $output completed${normal}"
 
