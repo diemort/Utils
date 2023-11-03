@@ -24,6 +24,7 @@ then
     ffmpeg -i "$filename" -crf 17 -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" -c:a copy "$( basename "$filename" .webm ).mp4"
     # output
     rm -rf "$filename"
+    rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
 fi
 echo "Download of $( basename "$filename" .webm).mp4 completed"
