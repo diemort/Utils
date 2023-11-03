@@ -39,5 +39,7 @@ then
     rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
 fi
+
+# say goodbye:
 echo "${bold}>>>>> ${underline}Download of $output completed${normal}"
 
