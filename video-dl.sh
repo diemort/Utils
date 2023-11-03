@@ -5,41 +5,73 @@ bold=$( tput bold )
 normal=$( tput sgr0 )
 underline=$( tput smul )
 
-# download with pt-BR subs:
-echo "${bold}>>>>> ${underline}Downloading ${1}${normal}"
-yt-dlp \
-    --restrict-filenames \
-    --write-sub \
-    --write-auto-sub \
-    --sub-lang "pt*" \
-    --sub-format ttml \
-    --convert-sub vtt \
-    ${1}
+main () {
+    link=$1
+    crf=$2
+    download $link
+    redefine $link $crf
+    fix_subs $subtitle
+    if [[ $filename != *.mp4 ]]
+    then
+        convert $filename $crf $output
+        clean $filename
+    fi
+}
 
-# extract filename:
-filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive ${1} )"
-subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
-output="$( basename "$filename" .webm )-crf${2}.mp4"
+download () {
+    # download with pt-BR subs:
+    echo "${bold}>>>>> ${underline}Downloading ${1}${normal}"
+    yt-dlp \
+        --restrict-filenames \
+        --write-sub \
+        --write-auto-sub \
+        --sub-lang "pt*" \
+        --sub-format ttml \
+        --convert-sub vtt \
+        ${1}
+}
 
-# correct timing in subtitle:
-echo "${bold}>>>>> ${underline}Adjusting timing in auto subtitles${normal}"
-ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
+redefine () {
+    link=$1
+    crf=$2
+    # extract filename:
+    filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive $link )"
+    subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
+    output="$( basename "$filename" .webm )-crf${crf}.mp4"
+}
 
-# convert preserving quality and subs:
-if [[ $filename != *.mp4 ]]
-then
+fix_subs () {
+    subtitle=$1
+    # correct timing in subtitle:
+    echo "${bold}>>>>> ${underline}Adjusting timing in auto subtitles${normal}"
+    ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
+}
+
+convert () {
+    filename=$1
+    crf=$2
+    output=$3
+    # convert preserving quality and subs:
     echo "${bold}>>>>> ${underline}Converting video to mp4${normal}"
     ffmpeg -i "$filename" \
-        -crf ${2} \
+        -crf $crf \
         -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
         -c:a copy \
         "$output"
-    # output
+}
+
+clean () {
+    # output if converted to mp4:
     rm -rf "$filename"
     rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
-fi
+}
 
+# main:
+link=$1
+crf=$2
+main "$@" $link $crf
 # say goodbye:
 echo "${bold}>>>>> ${underline}Download of $output completed${normal}"
+exit 0
 
