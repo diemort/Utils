@@ -11,7 +11,7 @@ yt-dlp \
     ${1}
 
 # extract filename:
-filename=$( yt-dlp --get-filename --no-download-archive ${1} )
+filename="$( yt-dlp --get-filename --no-download-archive ${1} )"
 subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
 
 # correct timing in subtitle:
