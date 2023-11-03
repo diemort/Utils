@@ -2,7 +2,13 @@
 
 # download with pt-BR subs:
 echo "Downloading ${1}"
-yt-dlp --write-sub --write-auto-sub --sub-lang "pt*" --embed-subs ${1}
+yt-dlp \
+    --write-sub \
+    --write-auto-sub \
+    --sub-lang "pt*" \
+    --sub-format ttml \
+    --convert-sub vtt \
+    ${1}
 
 # extract filename:
 filename=$( yt-dlp --get-filename --no-download-archive ${1} )
