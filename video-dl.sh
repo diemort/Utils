@@ -6,6 +6,10 @@ yt-dlp --write-sub --write-auto-sub --sub-lang "pt*" --embed-subs ${1}
 
 # extract filename:
 filename=$( yt-dlp --get-filename --no-download-archive ${1} )
+subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
+
+# correct timing in subtitle:
+ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
 
 # convert preserving quality and subs:
 if [[ $filename != *.mp4 ]]
