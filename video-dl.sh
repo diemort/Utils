@@ -21,7 +21,7 @@ ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
 if [[ $filename != *.mp4 ]]
 then
     echo "Converting video to mp4"
-    ffmpeg -i "$filename" -crf 17 -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" -c:a copy "$( basename "$filename" .webm ).mp4"
+    ffmpeg -i "$filename" -crf ${2} -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" -c:a copy "$( basename "$filename" .webm ).mp4"
     # output
     rm -rf "$filename"
     rm -rf subs.vtt
