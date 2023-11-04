@@ -10,16 +10,17 @@ help () {
     description
     echo
     syntax
-    echo
 }
 
 description () {
     echo "Youtube video downloader"\
-        " with automatic conversion to MP4"
+        "with automatic conversion to MP4"
+    echo "Use option -h for help"
 }
 
 syntax () {
-    echo "Syntax: bash video-dl.sh [youtube-link] [crf quality 0-51]"
+    echo "Syntax: bash video-dl.sh -i|--input [youtube-link] -q|--quality [crf quality 0-51]"
+    echo
 }
 
 main () {
@@ -33,6 +34,7 @@ main () {
         convert $filename $crf $output
         clean $filename
     fi
+    return
 }
 
 download () {
@@ -46,6 +48,7 @@ download () {
         --sub-format ttml \
         --convert-sub vtt \
         ${1}
+    return
 }
 
 redefine () {
@@ -55,6 +58,7 @@ redefine () {
     filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive $link )"
     subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
     output="$( basename "$filename" .webm )-crf${crf}.mp4"
+    return
 }
 
 fix_subs () {
@@ -62,6 +66,7 @@ fix_subs () {
     # correct timing in subtitle:
     echo "${bold}>>>>> ${underline}Adjusting timing in auto subtitles${normal}"
     ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
+    return
 }
 
 convert () {
@@ -75,6 +80,7 @@ convert () {
         -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
         -c:a copy \
         "$output"
+    return
 }
 
 clean () {
@@ -82,22 +88,50 @@ clean () {
     rm -rf "$filename"
     rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
+    return
 }
 
 # main:
-link=$1
-crf=$2
 # check arguments:
-if [ -z "$1" ] || [ -z "$2" ]
+if [[ $# -eq 0 ]]
 then
-    echo
-    echo ">>>>> Arguments missing"
+    echo "Arguments missing"
     syntax
     exit 1
+else
+    while [[ $# -gt 0 ]]
+    do
+        case $1 in
+            -i|--input)
+                link="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            -q|--quality)
+                crf="$2"
+                shift # past argument
+                shift # past value
+                ;;
+            -h|--help)
+                help
+                exit 0
+                ;;
+            -*|--*)
+                echo "Unknown option $1"
+                syntax
+                exit 1
+                ;;
+        esac
+    done
 fi
 # main:
 main "$@" $link $crf
 # say goodbye:
-echo "${bold}>>>>> ${underline}Download of $output completed${normal}"
-exit 0
+if [ $? == "0" ]
+then
+    echo "${bold}>>>>> ${underline}Download of $output completed${normal}"
+    exit 0
+else
+    exit 1
+fi
 
