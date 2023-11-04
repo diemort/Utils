@@ -5,6 +5,23 @@ bold=$( tput bold )
 normal=$( tput sgr0 )
 underline=$( tput smul )
 
+help () {
+    # Display help:
+    description
+    echo
+    syntax
+    echo
+}
+
+description () {
+    echo "Youtube video downloader"\
+        " with automatic conversion to MP4"
+}
+
+syntax () {
+    echo "Syntax: bash video-dl.sh [youtube-link] [crf quality 0-51]"
+}
+
 main () {
     link=$1
     crf=$2
@@ -70,6 +87,15 @@ clean () {
 # main:
 link=$1
 crf=$2
+# check arguments:
+if [ -z "$1" ] || [ -z "$2" ]
+then
+    echo
+    echo ">>>>> Arguments missing"
+    syntax
+    exit 1
+fi
+# main:
 main "$@" $link $crf
 # say goodbye:
 echo "${bold}>>>>> ${underline}Download of $output completed${normal}"
