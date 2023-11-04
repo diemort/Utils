@@ -1,5 +1,14 @@
 #!/bin/bash
 
+####################
+#
+# Youtube video downloader with automatic conversion to MP4
+# Uses: yt-dlp and ffmpeg
+#
+# Author: Gustavo Gil da Silveira (CERN-CMS|UFRGS|UERJ)
+#
+####################
+
 # Styling:
 bold=$( tput bold )
 normal=$( tput sgr0 )
