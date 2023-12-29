@@ -56,7 +56,7 @@ download () {
         --restrict-filenames \
         --write-sub \
         --write-auto-sub \
-        --sub-lang "$( echo ${lang} )*" \
+        --sub-lang ""${lang}"*" \
         --sub-format ttml \
         --convert-sub vtt \
         ${link}
