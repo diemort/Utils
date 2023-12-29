@@ -28,7 +28,10 @@ description () {
 }
 
 syntax () {
-    echo "Syntax: bash video-dl.sh -i|--input [youtube-link] -q|--quality [crf quality 0-51] -l|--language [2-word language symbol]"
+    echo "Syntax: bash video-dl.sh"\
+        "-i|--input [youtube-link]"\
+        "-q|--quality [crf quality 0-51]"\
+        "-l|--language [2-word language symbol]"
     echo
 }
 
