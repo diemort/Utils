@@ -71,7 +71,7 @@ redefine () {
     crf=$2
     # extract filename:
     filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive $link )"
-    subtitle="$( ls "$( basename "$filename" .webm )"* ).vtt"
+    subtitle="$( basename "$filename" .webm ).${lang}.vtt"
     output="$( basename "$filename" .webm )-crf${crf}.mp4"
     return
 }
