@@ -28,14 +28,15 @@ description () {
 }
 
 syntax () {
-    echo "Syntax: bash video-dl.sh -i|--input [youtube-link] -q|--quality [crf quality 0-51]"
+    echo "Syntax: bash video-dl.sh -i|--input [youtube-link] -q|--quality [crf quality 0-51] -l|--lang [2-word language symbol]"
     echo
 }
 
 main () {
     link=$1
     crf=$2
-    download $link
+    lang=$3
+    download $link $lang
     redefine $link $crf
     fix_subs $subtitle
     if [[ $filename != *.mp4 ]]
@@ -47,16 +48,18 @@ main () {
 }
 
 download () {
-    # download with pt-BR subs:
-    echo "${bold}>>>>> ${underline}Downloading ${1}${normal}"
+    # download with subs:
+    link=$1
+    lang=$2
+    echo "${bold}>>>>> ${underline}Downloading ${link} with subs in ${lang} ${normal}"
     yt-dlp \
         --restrict-filenames \
         --write-sub \
         --write-auto-sub \
-        --sub-lang "pt*" \
+        --sub-lang "$( echo ${lang} )*" \
         --sub-format ttml \
         --convert-sub vtt \
-        ${1}
+        ${link}
     return
 }
 
@@ -65,7 +68,7 @@ redefine () {
     crf=$2
     # extract filename:
     filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive $link )"
-    subtitle="$( ls "$( basename "$filename" .webm )"*.vtt )"
+    subtitle="$( ls "$( basename "$filename" .webm )"* ).vtt"
     output="$( basename "$filename" .webm )-crf${crf}.mp4"
     return
 }
@@ -125,6 +128,11 @@ else
                 help
                 exit 0
                 ;;
+            -l|--lang)
+                lang="$2"
+                shift # past argument
+                shift # past value
+                ;;
             -*|--*)
                 echo "Unknown option $1"
                 syntax
@@ -134,7 +142,7 @@ else
     done
 fi
 # main:
-main "$@" $link $crf
+main "$@" $link $crf $lang
 # say goodbye:
 if [ $? == "0" ]
 then
