@@ -28,11 +28,11 @@ description () {
 }
 
 syntax () {
-    echo "Syntax: bash video-dl.sh"\
-        "-i|--input [youtube-link]"\
-        "-q|--quality [crf quality 0-51]"\
-        "-l|--language [2-word language symbol]"\
-        "-w|--overwrite [yes|no overwrite previous mp4 from ffmpeg - default no]"
+    echo "Syntax: bash video-dl.sh"
+    echo "  -i, --input     [youtube-link]       Specify the YouTube video link"
+    echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion"
+    echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles"
+    echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (default: no)"
     echo
 }
 
