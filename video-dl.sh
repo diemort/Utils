@@ -31,7 +31,8 @@ syntax () {
     echo "Syntax: bash video-dl.sh"\
         "-i|--input [youtube-link]"\
         "-q|--quality [crf quality 0-51]"\
-        "-l|--language [2-word language symbol]"
+        "-l|--language [2-word language symbol]"\
+        "-w|--overwrite [yes|no overwrite previous mp4 from ffmpeg - default no]"
     echo
 }
 
@@ -39,12 +40,13 @@ main () {
     link=$1
     crf=$2
     lang=$3
+    overwrite=$4
     download $link $lang
     redefine $link $crf
     fix_subs $subtitle
     if [[ $filename != *.mp4 ]]
     then
-        convert $filename $crf $output
+        convert $filename $crf $output $overwrite
         clean $filename
     fi
     return
@@ -54,7 +56,7 @@ download () {
     # download with subs:
     link=$1
     lang=$2
-    echo "${bold}>>>>> ${underline}Downloading ${link} with subs in ${lang} ${normal}"
+    echo "${bold}>>>>> ${underline}Downloading ${link} with subs in ${lang}${normal}"
     yt-dlp \
         --restrict-filenames \
         --write-sub \
@@ -88,12 +90,20 @@ convert () {
     filename=$1
     crf=$2
     output=$3
+    overwrite=$4
+    # check if overwrite
+    overw="-n"
+    if [ "$overwrite" == "yes" ] || [ "$overwrite" == "" ]
+    then
+        overw="-y"
+    fi
     # convert preserving quality and subs:
     echo "${bold}>>>>> ${underline}Converting video to mp4${normal}"
     ffmpeg -i "$filename" \
         -crf $crf \
         -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
         -c:a copy \
+        $overw \
         "$output"
     return
 }
@@ -136,6 +146,11 @@ else
                 shift # past argument
                 shift # past value
                 ;;
+            -w|--overwrite)
+                overwrite="$2"
+                shift # past argument
+                shift # past value
+                ;;
             -*|--*)
                 echo "Unknown option $1"
                 syntax
@@ -145,7 +160,7 @@ else
     done
 fi
 # main:
-main "$@" $link $crf $lang
+main "$@" $link $crf $lang $overwrite
 # say goodbye:
 if [ $? == "0" ]
 then
