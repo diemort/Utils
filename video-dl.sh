@@ -129,13 +129,11 @@ else
         case $1 in
             -i|--input)
                 link="$2"
-                shift # past argument
-                shift # past value
+                shift 2
                 ;;
             -q|--quality)
                 crf="$2"
-                shift # past argument
-                shift # past value
+                shift 2
                 ;;
             -h|--help)
                 help
@@ -143,13 +141,11 @@ else
                 ;;
             -l|--language)
                 lang="$2"
-                shift # past argument
-                shift # past value
+                shift 2
                 ;;
             -w|--overwrite)
                 overwrite="$2"
-                shift # past argument
-                shift # past value
+                shift 2
                 ;;
             -*|--*)
                 echo "Unknown option $1"
