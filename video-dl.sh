@@ -118,14 +118,14 @@ clean () {
 
 # main:
 # check arguments:
-if [[ $# -eq 0 ]]
-then
-    echo "Arguments missing"
-    syntax
-    exit 1
-else
-    while [[ $# -gt 0 ]]
-    do
+if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 4 ]; }; then
+    # if -h option is present, display help and exit:
+    if [ "$1" == "-h" ]; then
+        help
+        exit 0
+    fi
+    # parse command-line options:
+    while [[ $# -gt 0 ]]; do
         case $1 in
             -i|--input)
                 link="$2"
@@ -134,10 +134,6 @@ else
             -q|--quality)
                 crf="$2"
                 shift 2
-                ;;
-            -h|--help)
-                help
-                exit 0
                 ;;
             -l|--language)
                 lang="$2"
@@ -154,7 +150,13 @@ else
                 ;;
         esac
     done
+else
+    # if conditions are not met, display an error message and exit:
+    echo "Error: Missing one or more required options."
+    syntax
+    exit 1
 fi
+
 # main:
 main "$@" $link $crf $lang $overwrite
 # say goodbye:
