@@ -33,6 +33,7 @@ syntax () {
     echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion"
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles"
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (default: no)"
+    echo "  -s, --subtitles [yes|no]             Add subtitles (default: yes)"
     echo
 }
 
@@ -41,9 +42,14 @@ main () {
     crf=$2
     lang=$3
     overwrite=$4
-    download $link $lang
+    subtitles=$5
+    download $link $lang $subtitles
     redefine $link $crf
-    fix_subs $subtitle
+    # check if subtitles needed:
+    if [ "$subtitles" == "yes" ]; then
+        fix_subs $subtitle
+    fi
+    # convert to mp4:
     if [[ $filename != *.mp4 ]]
     then
         convert $filename $crf $output $overwrite
@@ -56,15 +62,25 @@ download () {
     # download with subs:
     link=$1
     lang=$2
-    echo "${bold}>>>>> ${underline}Downloading ${link} with subs in ${lang}${normal}"
-    yt-dlp \
-        --restrict-filenames \
-        --write-sub \
-        --write-auto-sub \
-        --sub-lang ""${lang}"*" \
-        --sub-format ttml \
-        --convert-sub vtt \
-        ${link}
+    subtitles=$3
+    echo -n "${bold}>>>>> ${underline}Downloading ${link} "
+    # check wether subtitles should be added or not:
+    if [ "$subtitles" == "yes" ]; then
+        echo "with subtitles in ${lang}${normal}"
+        yt-dlp \
+            --restrict-filenames \
+            --write-sub \
+            --write-auto-sub \
+            --sub-lang ""${lang}"*" \
+            --sub-format ttml \
+            --convert-sub vtt \
+            ${link}
+    else
+        echo "without subtitles${normal}"
+        yt-dlp \
+            --restrict-filenames \
+            ${link}
+    fi
     return
 }
 
@@ -73,7 +89,12 @@ redefine () {
     crf=$2
     # extract filename:
     filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive $link )"
-    subtitle="$( basename "$filename" .webm ).${lang}.vtt"
+    # check if subtitles needed:
+    if [ "$subtitles" == "yes" ]; then
+        subtitle="$( basename "$filename" .webm ).${lang}.vtt"
+    else
+        subtitle=""  # No subtitles, so set subtitle to an empty string
+    fi
     output="$( basename "$filename" .webm )-crf${crf}.mp4"
     return
 }
@@ -99,12 +120,21 @@ convert () {
     fi
     # convert preserving quality and subs:
     echo "${bold}>>>>> ${underline}Converting video to mp4${normal}"
-    ffmpeg -i "$filename" \
-        -crf $crf \
-        -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
-        -c:a copy \
-        $overw \
-        "$output"
+    # check wether subtitles should be added or not:
+    if [ "$subtitles" == "yes" ]; then
+        ffmpeg -i "$filename" \
+            -crf $crf \
+            -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
+            -c:a copy \
+            $overw \
+            "$output"
+    else
+        ffmpeg -i "$filename" \
+            -crf $crf \
+            -c:a copy \
+            $overw \
+            "$output"
+    fi
     return
 }
 
@@ -117,8 +147,10 @@ clean () {
 }
 
 # main:
+subtitles="yes"
+
 # check arguments:
-if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 4 ]; }; then
+if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 5 ]; }; then
     # if -h option is present, display help and exit:
     if [ "$1" == "-h" ]; then
         help
@@ -143,6 +175,10 @@ if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 4 ]; }; then
                 overwrite="$2"
                 shift 2
                 ;;
+            -s|--subtitles)
+                subtitles="$2"
+                shift 2
+                ;;
             -*|--*)
                 echo "Unknown option $1"
                 syntax
@@ -158,7 +194,7 @@ else
 fi
 
 # main:
-main "$@" $link $crf $lang $overwrite
+main "$@" $link $crf $lang $overwrite $subtitles
 # say goodbye:
 if [ $? == "0" ]
 then
