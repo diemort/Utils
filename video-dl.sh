@@ -14,6 +14,7 @@ DEFAULT_SUBTITLES="no"
 DEFAULT_LANGUAGE="en"
 DEFAULT_OVERWRITE="yes"
 DEFAULT_CRF=23
+DEFAULT_VERBOSE=false
 
 # styling:
 bold=$( tput bold )
@@ -80,10 +81,13 @@ download () {
     log $(subtitles_status)
     log $(crf_status)
     log $(overwrite_status)
+    # check verbosity:
+    verbose_yt=""; if [ "$verbose" == false ]; then verbose_yt="-q"; fi
     # check wether subtitles should be added or not:
     if [ "$subtitles" == "yes" ]
     then
         yt-dlp \
+            ${verbose_yt} \
             --restrict-filenames \
             --write-sub \
             --write-auto-sub \
@@ -93,6 +97,7 @@ download () {
             ${link}
     else
         yt-dlp \
+            ${verbose_yt} \
             --restrict-filenames \
             ${link}
     fi
@@ -125,7 +130,9 @@ fix_subs () {
     subtitle=$1
     # correct timing in subtitle:
     echo "${bold}>>>>> ${underline}Adjusting timing in auto subtitles${normal}"
-    ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
+    # check verbosity:
+    verbose_ffmpeg=""; if [ "$verbose" == false ]; then verbose_ffmpeg="-hide_banner -loglevel error"; fi
+    ffmpeg -fix_sub_duration ${verbose_ffmpeg} -i "$subtitle" subs.vtt
     check_success "Subtitles fixed"
 }
 
@@ -142,6 +149,8 @@ convert () {
     fi
     # convert preserving quality and subs:
     log "Converting video to mp4 $(overwrite_status)"
+    # check verbosity:
+    verbose_ffmpeg=""; if [ "$verbose" == false ]; then verbose_ffmpeg="-hide_banner -loglevel error"; fi
     # check wether subtitles should be added or not:
     if [ "$subtitles" == "yes" ]
     then
@@ -150,12 +159,14 @@ convert () {
             -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
             -c:a copy \
             $overw \
+            $verbose_ffmpeg \
             "$output"
     else
         ffmpeg -i "$filename" \
             -crf $crf \
             -c:a copy \
             $overw \
+            $verbose_ffmpeg \
             "$output"
     fi
     check_success "Video converted"
@@ -214,6 +225,7 @@ subtitles="${subtitles:-$DEFAULT_SUBTITLES}"
 overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
 lang="${lang:-$DEFAULT_LANGUAGE}"
 crf="${crf:-$DEFAULT_CRF}"
+verbose="${verbose:-$DEFAULT_VERBOSE}"
 
 # check arguments:
 if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 1 ]; }
@@ -246,6 +258,10 @@ then
             -s|--subtitles)
                 subtitles="$2"
                 shift 2
+                ;;
+            -v|--verbose)
+                verbose=true
+                shift
                 ;;
             -*|--*)
                 echo "Unknown option $1"
