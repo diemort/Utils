@@ -74,7 +74,7 @@ download () {
     link=$1
     lang=$2
     subtitles=$3
-    log "Downloading ${link} $(subtitles_status)"
+    log "Downloading ${link} $(subtitles_status) $(crf_status)"
     # check wether subtitles should be added or not:
     if [ "$subtitles" == "yes" ]; then
         yt-dlp \
@@ -174,12 +174,8 @@ overwrite_status() {
 
 # crf status function:
 crf_status() {
-    if [ "$crf" == "" ]; then
-        echo ""
-    else        
-        echo "using default crf==23"
-    fi          
-} 
+    echo "with default quality crf==$crf"
+}
 
 # check command success function:
 check_success() {
