@@ -75,7 +75,9 @@ download () {
     link=$1
     lang=$2
     subtitles=$3
-    log "Downloading ${link} $(subtitles_status) $(crf_status)"
+    log "Downloading '$( get_title )'"
+    log $(subtitles_status)
+    log $(crf_status)
     # check wether subtitles should be added or not:
     if [ "$subtitles" == "yes" ]
     then
@@ -93,6 +95,13 @@ download () {
             ${link}
     fi
     check_success "Downloaded"
+}
+
+# get video title without tags:
+get_title () {
+    title="$( yt-dlp --get-filename --no-download-archive $link )"
+    title=$( basename $title .webm )
+    echo ${title%[*}
 }
 
 redefine () {
