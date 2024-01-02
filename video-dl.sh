@@ -18,8 +18,13 @@ bold=$( tput bold )
 normal=$( tput sgr0 )
 underline=$( tput smul )
 
+# logging function:
+log() {
+    echo "${bold}>>>>> ${underline}$@${normal}"
+}
+
 help () {
-    # Display help:
+    # display help:
     description
     echo
     syntax
@@ -68,10 +73,9 @@ download () {
     link=$1
     lang=$2
     subtitles=$3
-    echo -n "${bold}>>>>> ${underline}Downloading ${link} "
+    log "Downloading ${link} $(subtitles_status)"
     # check wether subtitles should be added or not:
     if [ "$subtitles" == "yes" ]; then
-        echo "with subtitles in ${lang}${normal}"
         yt-dlp \
             --restrict-filenames \
             --write-sub \
@@ -81,11 +85,11 @@ download () {
             --convert-sub vtt \
             ${link}
     else
-        echo "without subtitles${normal}"
         yt-dlp \
             --restrict-filenames \
             ${link}
     fi
+    check_success "Downloaded"
 }
 
 redefine () {
@@ -107,6 +111,7 @@ fix_subs () {
     # correct timing in subtitle:
     echo "${bold}>>>>> ${underline}Adjusting timing in auto subtitles${normal}"
     ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
+    check_success "Subtitles fixed"
 }
 
 convert () {
@@ -121,7 +126,7 @@ convert () {
         overw="-y"
     fi
     # convert preserving quality and subs:
-    echo "${bold}>>>>> ${underline}Converting video to mp4${normal}"
+    log "Converting video to mp4 $(overwrite_status)"
     # check wether subtitles should be added or not:
     if [ "$subtitles" == "yes" ]; then
         ffmpeg -i "$filename" \
@@ -137,6 +142,7 @@ convert () {
             $overw \
             "$output"
     fi
+    check_success "Video converted"
 }
 
 clean () {
@@ -144,7 +150,38 @@ clean () {
     rm -rf "$filename"
     rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
+    check_success "Area cleaned"
 }
+
+# subtitles status function:
+subtitles_status() {
+    if [ "$subtitles" == "yes" ]; then
+        echo "with subtitles"
+    else
+        echo "without subtitles"
+    fi
+}
+
+# overwrite status function:
+overwrite_status() {
+    if [ "$overwrite" == "yes" ] || [ "$overwrite" == "" ]; then
+        echo "with overwrite"
+    else
+        echo "without overwrite"
+    fi
+}
+
+# check command success function:
+check_success() {
+    if [ $? -ne 0 ]; then
+        log "Error: $1 failed. Exiting."
+        exit 1
+    else
+        echo "${bold}----- $@${normal}" 
+    fi
+}
+
+
 
 # main:
 # check arguments:
@@ -197,12 +234,8 @@ overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
 
 # main:
 main "$@" $link $crf $lang $overwrite $subtitles
+
 # say goodbye:
-if [ $? == "0" ]
-then
-    echo "${bold}>>>>> ${underline}Download of $output completed${normal}"
-    exit 0
-else
-    exit 1
-fi
+log "Download of $output completed"
+exit 0
 
