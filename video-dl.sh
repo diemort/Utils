@@ -10,7 +10,8 @@
 ####################
 
 # constants
-DEFAULT_SUBTITLES="yes"
+DEFAULT_SUBTITLES="no"
+DEFAULT_LANGUAGE="en"
 DEFAULT_OVERWRITE="yes"
 DEFAULT_CRF=23
 
@@ -43,9 +44,9 @@ syntax () {
     echo
     echo "  -i, --input     [youtube-link]       Specify the YouTube video link"
     echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion (optional, default: 23)"
-    echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles"
+    echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles (optional, default en)"
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
-    echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: yes)"
+    echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: no)"
     echo
 }
 
@@ -78,6 +79,7 @@ download () {
     log "Downloading '$( get_title )'"
     log $(subtitles_status)
     log $(crf_status)
+    log $(overwrite_status)
     # check wether subtitles should be added or not:
     if [ "$subtitles" == "yes" ]
     then
@@ -171,7 +173,7 @@ clean () {
 subtitles_status() {
     if [ "$subtitles" == "yes" ]
     then
-        echo "with subtitles"
+        echo "with subtitles in ${lang}"
     else
         echo "without subtitles"
     fi
@@ -206,6 +208,13 @@ check_success() {
 
 
 # main:
+
+# defaults:
+subtitles="${subtitles:-$DEFAULT_SUBTITLES}"
+overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
+lang="${lang:-$DEFAULT_LANGUAGE}"
+crf="${crf:-$DEFAULT_CRF}"
+
 # check arguments:
 if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 1 ]; }
 then
@@ -251,11 +260,6 @@ else
     syntax
     exit 1
 fi
-
-# set default value for subtitles/overwrite if not provided
-subtitles="${subtitles:-$DEFAULT_SUBTITLES}"
-overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
-crf="${crf:-$DEFAULT_CRF}"
 
 # main:
 main "$@" $link $crf $lang $overwrite $subtitles
