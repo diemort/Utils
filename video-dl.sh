@@ -32,7 +32,9 @@ description () {
 }
 
 syntax () {
-    echo "Syntax: bash video-dl.sh"
+    echo -n "Syntax: bash video-dl.sh "
+    echo "-i <youtube-link> -q <crf-quality> -l <language> -w <overwrite-option> -s <subtitles-option>"
+    echo
     echo "  -i, --input     [youtube-link]       Specify the YouTube video link"
     echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion"
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles"
