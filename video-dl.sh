@@ -58,7 +58,8 @@ main () {
     download $link $lang $subtitles
     redefine $link $crf
     # check if subtitles needed:
-    if [ "$subtitles" == "yes" ]; then
+    if [ "$subtitles" == "yes" ]
+    then
         fix_subs $subtitle
     fi
     # convert to mp4:
@@ -76,7 +77,8 @@ download () {
     subtitles=$3
     log "Downloading ${link} $(subtitles_status) $(crf_status)"
     # check wether subtitles should be added or not:
-    if [ "$subtitles" == "yes" ]; then
+    if [ "$subtitles" == "yes" ]
+    then
         yt-dlp \
             --restrict-filenames \
             --write-sub \
@@ -99,7 +101,8 @@ redefine () {
     # extract filename:
     filename="$( yt-dlp --restrict-filenames --get-filename --no-download-archive $link )"
     # check if subtitles needed:
-    if [ "$subtitles" == "yes" ]; then
+    if [ "$subtitles" == "yes" ]
+    then
         subtitle="$( basename "$filename" .webm ).${lang}.vtt"
     else
         subtitle=""  # No subtitles, so set subtitle to an empty string
@@ -129,7 +132,8 @@ convert () {
     # convert preserving quality and subs:
     log "Converting video to mp4 $(overwrite_status)"
     # check wether subtitles should be added or not:
-    if [ "$subtitles" == "yes" ]; then
+    if [ "$subtitles" == "yes" ]
+    then
         ffmpeg -i "$filename" \
             -crf $crf \
             -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
@@ -156,7 +160,8 @@ clean () {
 
 # subtitles status function:
 subtitles_status() {
-    if [ "$subtitles" == "yes" ]; then
+    if [ "$subtitles" == "yes" ]
+    then
         echo "with subtitles"
     else
         echo "without subtitles"
@@ -165,7 +170,8 @@ subtitles_status() {
 
 # overwrite status function:
 overwrite_status() {
-    if [ "$overwrite" == "yes" ] || [ "$overwrite" == "" ]; then
+    if [ "$overwrite" == "yes" ] || [ "$overwrite" == "" ]
+    then
         echo "with overwrite"
     else
         echo "without overwrite"
@@ -179,7 +185,8 @@ crf_status() {
 
 # check command success function:
 check_success() {
-    if [ $? -ne 0 ]; then
+    if [ $? -ne 0 ]
+    then
         log "Error: $1 failed. Exiting."
         exit 1
     else
@@ -191,9 +198,11 @@ check_success() {
 
 # main:
 # check arguments:
-if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 1 ]; }; then
+if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 1 ]; }
+then
     # if -h option is present, display help and exit:
-    if [ "$1" == "-h" ]; then
+    if [ "$1" == "-h" ]
+    then
         help
         exit 0
     fi
