@@ -12,6 +12,7 @@
 # constants
 DEFAULT_SUBTITLES="yes"
 DEFAULT_OVERWRITE="yes"
+DEFAULT_CRF=23
 
 # styling:
 bold=$( tput bold )
@@ -41,10 +42,10 @@ syntax () {
     echo "-i <youtube-link> -q <crf-quality> -l <language> -w <overwrite-option> -s <subtitles-option>"
     echo
     echo "  -i, --input     [youtube-link]       Specify the YouTube video link"
-    echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion"
+    echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion (optional, default: 23)"
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles"
-    echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (default: no)"
-    echo "  -s, --subtitles [yes|no]             Add subtitles (default: yes)"
+    echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
+    echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: yes)"
     echo
 }
 
@@ -171,6 +172,15 @@ overwrite_status() {
     fi
 }
 
+# crf status function:
+crf_status() {
+    if [ "$crf" == "" ]; then
+        echo ""
+    else        
+        echo "using default crf==23"
+    fi          
+} 
+
 # check command success function:
 check_success() {
     if [ $? -ne 0 ]; then
@@ -185,7 +195,7 @@ check_success() {
 
 # main:
 # check arguments:
-if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 5 ]; }; then
+if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 1 ]; }; then
     # if -h option is present, display help and exit:
     if [ "$1" == "-h" ]; then
         help
@@ -231,6 +241,7 @@ fi
 # set default value for subtitles/overwrite if not provided
 subtitles="${subtitles:-$DEFAULT_SUBTITLES}"
 overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
+crf="${crf:-$DEFAULT_CRF}"
 
 # main:
 main "$@" $link $crf $lang $overwrite $subtitles
