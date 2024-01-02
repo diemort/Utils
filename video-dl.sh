@@ -9,7 +9,11 @@
 #
 ####################
 
-# Styling:
+# constants
+DEFAULT_SUBTITLES="yes"
+DEFAULT_OVERWRITE="yes"
+
+# styling:
 bold=$( tput bold )
 normal=$( tput sgr0 )
 underline=$( tput smul )
@@ -141,8 +145,6 @@ clean () {
 }
 
 # main:
-subtitles="yes"
-
 # check arguments:
 if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 5 ]; }; then
     # if -h option is present, display help and exit:
@@ -186,6 +188,10 @@ else
     syntax
     exit 1
 fi
+
+# set default value for subtitles/overwrite if not provided
+subtitles="${subtitles:-$DEFAULT_SUBTITLES}"
+overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
 
 # main:
 main "$@" $link $crf $lang $overwrite $subtitles
