@@ -55,7 +55,6 @@ main () {
         convert $filename $crf $output $overwrite
         clean $filename
     fi
-    return
 }
 
 download () {
@@ -81,7 +80,6 @@ download () {
             --restrict-filenames \
             ${link}
     fi
-    return
 }
 
 redefine () {
@@ -96,7 +94,6 @@ redefine () {
         subtitle=""  # No subtitles, so set subtitle to an empty string
     fi
     output="$( basename "$filename" .webm )-crf${crf}.mp4"
-    return
 }
 
 fix_subs () {
@@ -104,7 +101,6 @@ fix_subs () {
     # correct timing in subtitle:
     echo "${bold}>>>>> ${underline}Adjusting timing in auto subtitles${normal}"
     ffmpeg -fix_sub_duration -i "$subtitle" subs.vtt
-    return
 }
 
 convert () {
@@ -135,7 +131,6 @@ convert () {
             $overw \
             "$output"
     fi
-    return
 }
 
 clean () {
@@ -143,7 +138,6 @@ clean () {
     rm -rf "$filename"
     rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
-    return
 }
 
 # main:
