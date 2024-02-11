@@ -48,6 +48,7 @@ syntax () {
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles (optional, default en)"
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
     echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: no)"
+    echo "  -v, --verbose                        Output from ut-dlp and ffmpeg (optional, default: omitted)"
     echo
 }
 
