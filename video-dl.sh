@@ -16,6 +16,7 @@ DEFAULT_OVERWRITE="yes"
 DEFAULT_CRF=23
 DEFAULT_VERBOSE=false
 DEFAULT_WEBM=false
+DEFAULT_NOTCONVERT=false
 
 # styling:
 bold=$( tput bold )
@@ -49,7 +50,8 @@ syntax () {
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles (optional, default en)"
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
     echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: no)"
-    echo "  -k, --keep-webm [true|false]         Keep webm file after video conversion (optional, default: false)"
+    echo "  -nc, --notconvert                    Do not convert video to mp4"
+    echo "  -k, --keep-webm                      Keep webm file after video conversion (optional, default: false)"
     echo "  -v, --verbose                        Output from ut-dlp and ffmpeg (optional, default: omitted)"
     echo
 }
@@ -68,11 +70,15 @@ main () {
         fix_subs $subtitle
     fi
     # convert to mp4:
-    if [[ $filename != *.mp4 ]]
+    if [ "$not_convert_vid" == false ];
     then
-        convert $filename $crf $output $overwrite
-        clean $filename
+        if [[ $filename != *.mp4 ]]
+        then
+            convert $filename $crf $output $overwrite
+        fi
+    log $(conversion_status)
     fi
+    clean $filename
 }
 
 download () {
@@ -84,6 +90,7 @@ download () {
     log $(subtitles_status)
     log $(crf_status)
     log $(overwrite_status)
+    log $(webm_status)
     # check verbosity:
     verbose_yt=""; if [ "$verbose" == false ]; then verbose_yt="-q"; fi
     # check wether subtitles should be added or not:
@@ -91,6 +98,7 @@ download () {
     then
         yt-dlp \
             ${verbose_yt} \
+            --progress \
             --restrict-filenames \
             --write-sub \
             --write-auto-sub \
@@ -152,6 +160,7 @@ convert () {
     fi
     # convert preserving quality and subs:
     log "Converting video to mp4 $(overwrite_status)"
+    log "$(webm_status)"
     # check verbosity:
     verbose_ffmpeg=""; if [ "$verbose" == false ]; then verbose_ffmpeg="-hide_banner -loglevel error"; fi
     # check wether subtitles should be added or not:
@@ -177,7 +186,8 @@ convert () {
 
 clean () {
     # output if converted to mp4:
-    if [ "$keep_webm" == false ]; then
+    if [ "$keep_webm" == false ] || [ "$not_convert_vid" == false ]
+    then
         rm -rf "$filename"
     fi
     rm -rf subs.vtt
@@ -210,6 +220,26 @@ crf_status() {
     echo "with default quality crf==$crf"
 }
 
+# keep webm status:
+webm_status() {
+    if [ "$keep_webm" == true ]
+    then    
+        echo "keeping webm" 
+    else    
+        echo "deleting webm"
+    fi
+}
+
+# conversion status:
+conversion_status() {
+    if [ "$not_convert_vid" == false ]
+    then
+        echo "converting video to mp4" 
+    else
+        echo "no video conversion"
+    fi
+}
+
 # check command success function:
 check_success() {
     if [ $? -ne 0 ]
@@ -232,6 +262,7 @@ lang="${lang:-$DEFAULT_LANGUAGE}"
 crf="${crf:-$DEFAULT_CRF}"
 verbose="${verbose:-$DEFAULT_VERBOSE}"
 keep_webm="${keep_webm:-$DEFAULT_WEBM}"
+not_convert_vid="${not_convert_vid:-$DEFAULT_NOTCONVERT}"
 
 # check arguments:
 if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 1 ]; }
@@ -271,6 +302,10 @@ then
                 ;;
             -k|--keep-webm)
                 keep_webm=true
+                shift
+                ;;
+            -nc|--not-convert)
+                not_convert_vid=true
                 shift
                 ;;
             -*|--*)
