@@ -15,6 +15,7 @@ DEFAULT_LANGUAGE="en"
 DEFAULT_OVERWRITE="yes"
 DEFAULT_CRF=23
 DEFAULT_VERBOSE=false
+DEFAULT_WEBM=false
 
 # styling:
 bold=$( tput bold )
@@ -48,6 +49,7 @@ syntax () {
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles (optional, default en)"
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
     echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: no)"
+    echo "  -k, --keep-webm [true|false]         Keep webm file after video conversion (optional, default: false)"
     echo "  -v, --verbose                        Output from ut-dlp and ffmpeg (optional, default: omitted)"
     echo
 }
@@ -175,7 +177,9 @@ convert () {
 
 clean () {
     # output if converted to mp4:
-    rm -rf "$filename"
+    if [ "$keep_webm" == false ]; then
+        rm -rf "$filename"
+    fi
     rm -rf subs.vtt
     rm -rf "$( basename "$filename" .webm )"*.vtt
     check_success "Area cleaned"
@@ -227,6 +231,7 @@ overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
 lang="${lang:-$DEFAULT_LANGUAGE}"
 crf="${crf:-$DEFAULT_CRF}"
 verbose="${verbose:-$DEFAULT_VERBOSE}"
+keep_webm="${keep_webm:-$DEFAULT_WEBM}"
 
 # check arguments:
 if { [ $# -eq 1 ] && [ "$1" == "-h" ]; } || { [ $# -ge 1 ]; }
@@ -262,6 +267,10 @@ then
                 ;;
             -v|--verbose)
                 verbose=true
+                shift
+                ;;
+            -k|--keep-webm)
+                keep_webm=true
                 shift
                 ;;
             -*|--*)
