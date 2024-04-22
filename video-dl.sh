@@ -74,7 +74,7 @@ main () {
     then
         if [[ $filename != *.mp4 ]]
         then
-            convert $filename $crf $output $overwrite
+            convert $filename $crf "${output}.mp4" $overwrite
         fi
     log $(conversion_status)
     fi
@@ -134,7 +134,7 @@ redefine () {
     else
         subtitle=""  # No subtitles, so set subtitle to an empty string
     fi
-    output="$( basename "$filename" .webm )-crf${crf}.mp4"
+    output="$( basename "$filename" .webm )-crf${crf}"
 }
 
 fix_subs () {
@@ -172,14 +172,14 @@ convert () {
             -c:a copy \
             $overw \
             $verbose_ffmpeg \
-            "$output"
+            "${output}.mp4"
     else
         ffmpeg -i "$filename" \
             -crf $crf \
             -c:a copy \
             $overw \
             $verbose_ffmpeg \
-            "$output"
+            "${output}.mp4"
     fi
     check_success "Video converted"
 }
