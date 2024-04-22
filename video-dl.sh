@@ -70,13 +70,13 @@ main () {
         fix_subs $subtitle
     fi
     # convert to mp4:
+    log $(conversion_status)
     if [ "$not_convert_vid" == false ];
     then
         if [[ $filename != *.mp4 ]]
         then
             convert $filename $crf "${output}.mp4" $overwrite
         fi
-    log $(conversion_status)
     fi
     clean $filename
 }
