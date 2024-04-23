@@ -62,6 +62,14 @@ main () {
     lang=$3
     overwrite=$4
     subtitles=$5
+    # full log:
+    log "Downloading '$( get_title )'"
+    log $(subtitles_status)
+    log $(crf_status)
+    log $(overwrite_status)
+    log $(webm_status)
+    log $(conversion_status)
+    #start:
     download $link $lang $subtitles
     redefine $link $crf
     # check if subtitles needed:
@@ -70,7 +78,6 @@ main () {
         fix_subs $subtitle
     fi
     # convert to mp4:
-    log $(conversion_status)
     if [ "$not_convert_vid" == false ];
     then
         if [[ $filename != *.mp4 ]]
@@ -86,11 +93,6 @@ download () {
     link=$1
     lang=$2
     subtitles=$3
-    log "Downloading '$( get_title )'"
-    log $(subtitles_status)
-    log $(crf_status)
-    log $(overwrite_status)
-    log $(webm_status)
     # check verbosity:
     verbose_yt=""; if [ "$verbose" == false ]; then verbose_yt="-q"; fi
     # check wether subtitles should be added or not:
@@ -159,8 +161,7 @@ convert () {
         overw="-y"
     fi
     # convert preserving quality and subs:
-    log "Converting video to mp4 $(overwrite_status)"
-    log "$(webm_status)"
+    log "Converting video to mp4 $(overwrite_status) and $(webm_status)"
     # check verbosity:
     verbose_ffmpeg=""; if [ "$verbose" == false ]; then verbose_ffmpeg="-hide_banner -loglevel error"; fi
     # check wether subtitles should be added or not:
