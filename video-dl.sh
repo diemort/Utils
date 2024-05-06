@@ -235,7 +235,7 @@ webm_status() {
 conversion_status() {
     if [ "$not_convert_vid" == false ]
     then
-        echo "converting video to mp4" 
+        echo "convert video to mp4" 
     else
         echo "no video conversion"
     fi
