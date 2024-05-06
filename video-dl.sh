@@ -187,7 +187,7 @@ convert () {
 
 clean () {
     # output if converted to mp4:
-    if [ "$keep_webm" == false ] || [ "$not_convert_vid" == false ]
+    if [ "$keep_webm" == false ]
     then
         rm -rf "$filename"
     fi
