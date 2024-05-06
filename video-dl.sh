@@ -136,7 +136,7 @@ redefine () {
     else
         subtitle=""  # No subtitles, so set subtitle to an empty string
     fi
-    output="$( basename "$filename" .webm )-crf${crf}"
+    output="$( basename "$filename" .webm )-crf${crf}-${lang}"
 }
 
 fix_subs () {
