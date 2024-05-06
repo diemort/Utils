@@ -82,7 +82,7 @@ main () {
     then
         if [[ $filename != *.mp4 ]]
         then
-            convert $filename $crf "${output}.mp4" $overwrite
+            convert $filename $crf "${output}" $overwrite
         fi
     fi
     clean $filename
