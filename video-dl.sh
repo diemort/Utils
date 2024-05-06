@@ -120,7 +120,7 @@ download () {
 # get video title without tags:
 get_title () {
     title="$( yt-dlp --get-filename --no-download-archive $link )"
-    title=$( basename $title .webm )
+    title=$( basename "$title" .webm )
     echo ${title%[*}
 }
 
