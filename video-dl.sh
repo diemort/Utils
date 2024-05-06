@@ -307,6 +307,7 @@ then
                 ;;
             -nc|--not-convert)
                 not_convert_vid=true
+                keep_webm=true
                 shift
                 ;;
             -*|--*)
