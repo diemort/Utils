@@ -132,11 +132,11 @@ redefine () {
     # check if subtitles needed:
     if [ "$subtitles" == "yes" ]
     then
-        subtitle="$( basename "$filename" ${filename##*.} ).${lang}.vtt"
+        subtitle="$( basename "$filename" .${filename##*.} ).${lang}.vtt"
     else
         subtitle=""  # No subtitles, so set subtitle to an empty string
     fi
-    output="$( basename "$filename" ${filename##*.} )-crf${crf}-${lang}"
+    output="$( basename "$filename" .${filename##*.} )-crf${crf}-${lang}"
 }
 
 fix_subs () {
