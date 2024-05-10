@@ -278,6 +278,11 @@ then
     while [[ $# -gt 0 ]]; do
         case $1 in
             -i|--input)
+                if [ -z "$2" ]
+                then
+                    echo "Missing Youtube link"
+                    exit 1
+                fi
                 link="$2"
                 shift 2
                 ;;
