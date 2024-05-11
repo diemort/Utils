@@ -52,7 +52,7 @@ syntax () {
     echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: no)"
     echo "  -nc, --notconvert                    Do not convert video to mp4"
     echo "  -k, --keep-webm                      Keep webm file after video conversion (optional, default: false)"
-    echo "  -v, --verbose                        Output from ut-dlp and ffmpeg (optional, default: omitted)"
+    echo "  -v, --verbose                        Output from yt-dlp and ffmpeg (optional, default: suppressed)"
     echo
 }
 
