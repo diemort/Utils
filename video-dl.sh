@@ -15,7 +15,7 @@ DEFAULT_LANGUAGE="en"
 DEFAULT_OVERWRITE="yes"
 DEFAULT_CRF=23
 DEFAULT_VERBOSE=false
-DEFAULT_WEBM=false
+DEFAULT_ORIGINAL=false
 DEFAULT_NOTCONVERT=false
 
 # styling:
@@ -51,7 +51,8 @@ syntax () {
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
     echo "  -s, --subtitles [yes|no]             Add subtitles (optional, default: no)"
     echo "  -nc, --notconvert                    Do not convert video to mp4"
-    echo "  -k, --keep-webm                      Keep webm file after video conversion (optional, default: false)"
+    echo "  -k, --keep-original                  Keep original file (webm, mkv) after video conversion" \
+                                                    "(optional, default: false)"
     echo "  -v, --verbose                        Output from yt-dlp and ffmpeg (optional, default: suppressed)"
     echo
 }
@@ -67,7 +68,7 @@ main () {
     log $(subtitles_status)
     log $(crf_status)
     log $(overwrite_status)
-    log $(webm_status)
+    log $(original_status)
     log $(conversion_status)
     #start:
     download $link $lang $subtitles
@@ -120,7 +121,7 @@ download () {
 # get video title without tags:
 get_title () {
     title="$( yt-dlp --get-filename --no-download-archive $link )"
-    title=$( basename "$title" .webm )
+    title=$( basename "$title" .${filename##*.} )
     echo ${title%[*}
 }
 
@@ -161,7 +162,7 @@ convert () {
         overw="-y"
     fi
     # convert preserving quality and subs:
-    log "Converting video to mp4 $(overwrite_status) and $(webm_status)"
+    log "Converting video to mp4 $(overwrite_status) and $(original_status)"
     # check verbosity:
     verbose_ffmpeg=""; if [ "$verbose" == false ]; then verbose_ffmpeg="-hide_banner -loglevel error"; fi
     # check wether subtitles should be added or not:
@@ -187,12 +188,12 @@ convert () {
 
 clean () {
     # output if converted to mp4:
-    if [ "$keep_webm" == false ]
+    if [ "$keep_original" == false ]
     then
         rm -rf "$filename"
     fi
     rm -rf subs.vtt
-    rm -rf "$( basename "$filename" .webm )"*.vtt
+    rm -rf "$( basename "$filename" .${filename##*.} )"*.vtt
     check_success "Area cleaned"
 }
 
@@ -221,13 +222,13 @@ crf_status() {
     echo "with default quality crf==$crf"
 }
 
-# keep webm status:
-webm_status() {
-    if [ "$keep_webm" == true ]
+# keep original status:
+original_status() {
+    if [ "$keep_original" == true ]
     then    
-        echo "keeping webm" 
+        echo "keeping original video file" 
     else    
-        echo "deleting webm"
+        echo "deleting original video file"
     fi
 }
 
@@ -262,7 +263,7 @@ overwrite="${overwrite:-$DEFAULT_OVERWRITE}"
 lang="${lang:-$DEFAULT_LANGUAGE}"
 crf="${crf:-$DEFAULT_CRF}"
 verbose="${verbose:-$DEFAULT_VERBOSE}"
-keep_webm="${keep_webm:-$DEFAULT_WEBM}"
+keep_original="${keep_original:-$DEFAULT_ORIGINAL}"
 not_convert_vid="${not_convert_vid:-$DEFAULT_NOTCONVERT}"
 
 # check arguments:
@@ -306,13 +307,13 @@ then
                 verbose=true
                 shift
                 ;;
-            -k|--keep-webm)
-                keep_webm=true
+            -k|--keep-original)
+                keep_original=true
                 shift
                 ;;
             -nc|--not-convert)
                 not_convert_vid=true
-                keep_webm=true
+                keep_original=true
                 shift
                 ;;
             -*|--*)
