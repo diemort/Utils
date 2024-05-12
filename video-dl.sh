@@ -45,7 +45,7 @@ syntax () {
     echo -n "Syntax: bash video-dl.sh "
     echo "-i <youtube-link> -q <crf-quality> -l <language> -w <overwrite-option> -s <subtitles-option>"
     echo
-    echo "  -i, --input     [youtube-link]       Specify the YouTube video link"
+    echo "  -i, --input     [youtube-link]       Specify the YouTube video link [mandatory]"
     echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion (optional, default: 23)"
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles (optional, default en)"
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
@@ -277,6 +277,11 @@ then
     fi
     # parse command-line options:
     while [[ $# -gt 0 ]]; do
+        if ! [[ "$1" =~ "-i" ]]
+        then
+            echo "Missing link in option -i [mandatory]"
+            exit 1
+        fi
         case $1 in
             -i|--input)
                 if [ -z "$2" ]
