@@ -275,13 +275,18 @@ then
         help
         exit 0
     fi
-    # parse command-line options:
-    while [[ $# -gt 0 ]]; do
+    # test if -i option given:
+    for i in "$@"
+    do
         if ! [[ "$1" =~ "-i" ]]
         then
-            echo "Missing link in option -i [mandatory]"
+            echo "Missing required option -i: youtube link"
             exit 1
         fi
+    done
+    # parse command-line options:
+    while [[ $# -gt 0 ]]
+    do
         case $1 in
             -i|--input)
                 if [ -z "$2" ]
