@@ -277,14 +277,21 @@ then
         exit 0
     fi
     # test if -i option given:
-    for i in "$@"
+    found_i=false
+    for arg in "$@"
     do
-        if ! [[ "$1" =~ "-i" ]]
+        echo $arg
+        if [[ "$arg" == "-i" ]] || [[ "$arg" == "--input" ]]
         then
-            echo "Missing required option -i: youtube link"
-            exit 1
+            found_i=true
+            break
         fi
     done
+    if ! $found_i
+    then
+        echo "Missing required option -i: youtube link"
+        exit 1
+    fi
     # parse command-line options:
     while [[ $# -gt 0 ]]
     do
