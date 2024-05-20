@@ -17,6 +17,7 @@ DEFAULT_CRF=23
 DEFAULT_VERBOSE=false
 DEFAULT_ORIGINAL=false
 DEFAULT_NOTCONVERT=false
+URL_REGEX="^https://www\.youtube\.com/watch\?v=[a-zA-Z0-9_-]{11}$"
 
 # styling:
 bold=$( tput bold )
@@ -46,6 +47,7 @@ syntax () {
     echo "-i <youtube-link> -q <crf-quality> -l <language> -w <overwrite-option> -s <subtitles-option>"
     echo
     echo "  -i, --input     [youtube-link]       Specify the YouTube video link [mandatory]"
+    echo "                  link format: https://www.youtube.com/watch?v=XXXXXXXXXXX"
     echo "  -q, --quality   [crf quality 0-51]   Set the CRF quality (0-51) for video conversion (optional, default: 23)"
     echo "  -l, --language  [2-word language]    Specify the language symbol for subtitles (optional, default en)"
     echo "  -w, --overwrite [yes|no]             Overwrite previous MP4 files from ffmpeg (optional, default: no)"
@@ -300,6 +302,11 @@ then
                 if [ -z "$2" ]
                 then
                     echo "Missing Youtube link"
+                    help
+                    exit 1
+                elif [[ ! "$2" =~ $URL_REGEX ]]
+                then
+                    echo "Invalid YouTube URL format"
                     exit 1
                 fi
                 link="$2"
