@@ -282,7 +282,6 @@ then
     found_i=false
     for arg in "$@"
     do
-        echo $arg
         if [[ "$arg" == "-i" ]] || [[ "$arg" == "--input" ]]
         then
             found_i=true
