@@ -17,7 +17,7 @@ DEFAULT_CRF=23
 DEFAULT_VERBOSE=false
 DEFAULT_ORIGINAL=false
 DEFAULT_NOTCONVERT=false
-URL_REGEX="^https://www\.youtube\.com/watch\?v=[a-zA-Z0-9_-]{11}$"
+URL_REGEX="^https://www\.youtube\.com/watch\?v=[a-zA-Z0-9_-]+$"
 
 # styling:
 bold=$( tput bold )
@@ -333,7 +333,7 @@ then
                     exit 1
                 elif [[ ! "$2" =~ $URL_REGEX ]]
                 then
-                    echo "Invalid YouTube URL format"
+                    echo "Invalid YouTube URL format: "$2""
                     exit 1
                 fi
                 link="$2"
