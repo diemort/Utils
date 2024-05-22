@@ -114,6 +114,7 @@ download () {
     else
         yt-dlp \
             ${verbose_yt} \
+            --progress \
             --restrict-filenames \
             ${link}
     fi
