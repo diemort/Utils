@@ -68,7 +68,10 @@ main () {
     # full log:
     log "Downloading '$( get_title )'"
     log $(subtitles_status "$link" "$lang")
-    subtitles=$( check_subs $link $lang )
+    if [[ "$subtitles" != "no" ]]
+    then
+        subtitles=$( check_subs $link $lang )
+    fi
     log $(crf_status)
     log $(overwrite_status)
     log $(original_status)
@@ -191,7 +194,6 @@ convert () {
     # check verbosity:
     verbose_ffmpeg=""; if [ "$verbose" == false ]; then verbose_ffmpeg="-hide_banner -loglevel error"; fi
     # check wether subtitles should be added or not:
-    echo $filename
     if [[ "$subtitles" == "yes" ]]
     then
         ffmpeg -i "$filename" \
