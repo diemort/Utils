@@ -68,7 +68,6 @@ main () {
     # full log:
     log "Downloading '$( get_title )'"
     log $(subtitles_status "$link" "$lang")
-    subtitles=$( check_subs "$link" "$lang" )
     log $(crf_status)
     log $(overwrite_status)
     log $(original_status)
@@ -99,16 +98,17 @@ check_subs () {
     # check list of subs:
     SUBS_OUTPUT=$(yt-dlp --list-subs "$link")
     # check if lang in the list of subs:
-    if echo "$SUBS_OUTPUT" | grep -q 'Available subtitles for'
+    if echo "$SUBS_OUTPUT" | grep -qE 'Available subtitles for|Available automatic captions for'
     then
         # extract language codes from output:
-        LANGUAGES=$(echo "$SUBS_OUTPUT" | awk '/Available subtitles for/ {found=1; next} found && /^[a-z]{2,3}\s/ {print $1}')
+        LANGUAGES=$(echo "$SUBS_OUTPUT" | awk '/Available (subtitles|automatic captions) for/ {found=1; next} found && NF > 1 && $1 ~ /^[a-z]{2,3}(-[A-Za-z]+)?$/ {print $1}')
         # check if specific language code is in the list:
         if echo "$LANGUAGES" | grep -q "^$lang_code$"
         then
             result="yes"
         fi
     fi
+    echo $result
 }
 
 download () {
@@ -225,13 +225,17 @@ clean () {
 subtitles_status() {
     link=$1
     lang=$2
-    check_subs $link $lang
+    if [[ "$subtitles" == "yes" ]]
+    then
+        result=$( check_subs $link $lang )
+    fi
     if [[ "$subtitles" == "yes" && "$result" == "yes" ]]
     then
         echo "with subtitles in ${lang}"
     elif [[ "$subtitles" == "yes" && "$result" == "no" ]]
     then
         echo "subtitle requested ${lang} not found; continuing without subtitles"
+        subtitles=$result
     elif [ "$subtitles" == "no" ]
     then
         echo "without subtitles"
