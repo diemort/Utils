@@ -83,7 +83,7 @@ main () {
     # convert to mp4:
     if [ "$not_convert_vid" == false ];
     then
-        if [[ $filename != *.mp4 ]]
+        if [[ $filename != *.mp4 ]] || [[ "$subtitles" == "yes" ]]
         then
             convert $filename $crf "${output}" $overwrite
         fi
@@ -190,7 +190,8 @@ convert () {
     # check verbosity:
     verbose_ffmpeg=""; if [ "$verbose" == false ]; then verbose_ffmpeg="-hide_banner -loglevel error"; fi
     # check wether subtitles should be added or not:
-    if [ "$subtitles" == "yes" ]
+    echo $filename
+    if [[ "$subtitles" == "yes" ]]
     then
         ffmpeg -i "$filename" \
             -crf $crf \
@@ -199,6 +200,14 @@ convert () {
             $overw \
             $verbose_ffmpeg \
             "${output}.mp4"
+    elif [[ "$subtitles" == "yes" ]] && [[ $filename == *.mp4 ]]
+    then
+        echo "here here"
+        ffmpeg -i "$filename" \
+            -vf "subtitles=subs.vtt:force_style='PrimaryColour=&H03fcff,Italic=1,Spacing=0.8'" \
+            $overw \
+            $verbose_ffmpeg \
+            "${output}.mp4" 
     else
         ffmpeg -i "$filename" \
             -crf $crf \
