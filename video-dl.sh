@@ -68,6 +68,7 @@ main () {
     # full log:
     log "Downloading '$( get_title )'"
     log $(subtitles_status "$link" "$lang")
+    subtitles=$( check_subs $link $lang )
     log $(crf_status)
     log $(overwrite_status)
     log $(original_status)
@@ -244,7 +245,6 @@ subtitles_status() {
     elif [[ "$subtitles" == "yes" && "$result" == "no" ]]
     then
         echo "subtitle requested ${lang} not found; continuing without subtitles"
-        subtitles=$result
     elif [ "$subtitles" == "no" ]
     then
         echo "without subtitles"
