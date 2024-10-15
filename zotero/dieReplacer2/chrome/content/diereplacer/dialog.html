@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Search and Replace</title>
+    <link rel="stylesheet" type="text/css" href="chrome://diereplacer/content/style.css">
+  </head>
+  <body id="search-replace-dialog">
+    <h1>Search and Replace</h1>
+    <form>
+      <label for="search">Search for:</label>
+      <input type="text" id="search" name="search"><br><br>
+
+      <label for="replace">Replace with:</label>
+      <input type="text" id="replace" name="replace"><br><br>
+
+      <button type="button" onclick="dieReplacer.performReplace()">Replace</button>
+    </form>
+  </body>
+</html>

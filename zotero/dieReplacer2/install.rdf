@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <!-- Plugin Metadata -->
+  <Description about="urn:mozilla:install-manifest">
+    
+    <!-- Plugin ID -->
+    <em:id>diereplacer@github.com</em:id>
+
+    <!-- Plugin Version -->
+    <em:version>1.0</em:version>
+
+    <!-- Target Application -->
+    <em:targetApplication>
+      <Description>
+        <!-- Zotero Application ID -->
+        <em:id>{35422c7c-2551-4c9b-952b-232a3eaa8b43}</em:id>
+        <!-- Minimum and maximum version for compatibility -->
+        <em:minVersion>6.0</em:minVersion>
+        <em:maxVersion>6.*</em:maxVersion>
+      </Description>
+    </em:targetApplication>
+
+    <!-- Name and Description of the Plugin -->
+    <em:name>dieReplacer</em:name>
+    <em:description>A plugin to search and replace text across Zotero entries, titles, and attachments</em:description>
+
+    <!-- Creator Information -->
+    <em:creator>diemort</em:creator>
+    <em:homepageURL>https://github.com/diemort/zotero-dieReplacer</em:homepageURL>
+
+    <!-- Disable automatic updates -->
+    <em:updateURL></em:updateURL>
+
+    <!-- Plugin Icon (Optional, if you want to add an icon) -->
+    <em:iconURL>chrome://diereplacer/skin/icon.png</em:iconURL>
+    <em:icon64URL>chrome://diereplacer/skin/icon64.png</em:icon64URL>
+
+    <!-- Plugin Type -->
+    <em:type>2</em:type>
+
+  </Description>
+
+</RDF>

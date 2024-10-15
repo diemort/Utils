@@ -1,0 +1,5 @@
+content diereplacer chrome/content/
+
+skin diereplacer classic/1.0 chrome/skin/
+
+overlay chrome://zotero/content/zotero.xul chrome://diereplacer/content/menu.xul

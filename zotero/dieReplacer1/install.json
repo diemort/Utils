@@ -1,0 +1,14 @@
+{
+    "name": "dieReplacer",
+    "version": "1.0",
+    "description": "A plugin to search and replace text in Zotero entries and their attached filenames.",
+    "author": "diemort",
+    "license": "GPL-3.0",
+    "minimumZoteroVersion": "6.0",
+    "maximalZoteroVersion": "6.999",
+    "files": {
+        "install.js": "install.js",
+        "dialog.html": "dialog.html",
+        "dialog.js": "dialog.js"
+    }
+}
