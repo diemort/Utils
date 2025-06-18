@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>URL Status</title>
+    <style>
+        body {
+            background-color: #343541; /* ChatGPT-like dark grey */
+            color: white;
+            font-family: Arial, sans-serif;
+            width: 180px;
+            padding: 10px;
+            margin: 0;
+        }
+
+        h3 {
+            font-size: 16px;
+            margin-top: 0;
+            color: white;
+        }
+
+        .ok {
+            color: #4caf50; /* green */
+        }
+
+        .fail {
+            color: #f44336; /* red */
+        }
+
+        a {
+            color: #10a37f;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .status-line {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h3>URL Status</h3>
+    <div id="status"></div>
+    <p><a href="#" id="open-options">⚙️ Edit URLs</a></p>
+    <script src="popup.js"></script>
+</body>
+</html>
